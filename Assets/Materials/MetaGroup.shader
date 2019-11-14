@@ -1,4 +1,4 @@
-﻿Shader "Unlit/Outline"{
+﻿Shader "Custom/MetaGroup"{
 
     Properties{
         _MainTex("Texture", 2D) = "white" {}
@@ -10,7 +10,7 @@
         Cull Off
         //Tags { "Queue"="Transparent" "RenderType"="Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
-        ZTest Off
+        ZWrite Off
 
         Pass{
             CGPROGRAM

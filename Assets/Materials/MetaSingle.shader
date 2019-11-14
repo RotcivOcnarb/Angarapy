@@ -1,19 +1,18 @@
-﻿Shader "Unlit/MetaSingle"{
+﻿Shader "Custom/MetaSingle"{
 
     Properties{
         _Intensity("Intensity", Float) = 0.1
     }
 
     SubShader {
-        Cull Off
-        Tags { "Queue"="Transparent" }
-        Blend SrcAlpha OneMinusSrcAlpha
-        //Blend One One
-        ZTest Off
-        ZWrite Off
-
+        
+        Tags { "Queue"="Overlay" }
+        
         //pass 1
         Pass{
+
+            Blend SrcAlpha OneMinusSrcAlpha
+
             CGPROGRAM
 
             #pragma vertex vertexFunc
@@ -41,7 +40,7 @@
             fixed4 fragmentFunc(v2f i) : COLOR{
                 half4 c = i.color;
                 float dist = length(i.uv - half2(.5, .5))*2;
-                c.a = clamp((1 / dist) * _Intensity, 0, 1);
+                c.a = clamp((1 / (dist)) * _Intensity, 0, 1);
 
                 return c;
             }

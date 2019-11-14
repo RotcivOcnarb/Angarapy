@@ -53,11 +53,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\MetaballShaderPass.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\CharacterMovement.cs" />
      <Compile Include="Assets\Scripts\MetaballCollision.cs" />
      <Compile Include="Assets\Scripts\PaintThrower.cs" />
      <None Include="Assets\Materials\MetaGroup.shader" />
+     <None Include="Assets\Materials\Metaballs.shader" />
      <None Include="Assets\Materials\MetaSingle.shader" />
  <Reference Include="Unity.2D.Animation.Runtime">
  <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.2D.Animation.Runtime.dll</HintPath>
