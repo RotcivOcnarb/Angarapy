@@ -8,8 +8,8 @@
     SubShader
     {
         //Cull Off
-        //Tags { "Queue"="Transparent" }
-        //ZWrite Off
+        Tags { "Queue"="Transparent" }
+        ZWrite Off
         Blend SrcAlpha OneMinusSrcAlpha
 
         Pass{
