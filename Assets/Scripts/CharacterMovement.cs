@@ -7,16 +7,29 @@ public class CharacterMovement : MonoBehaviour
     Rigidbody2D body;
     float xVel;
     public float speed;
+
+    public int jumps = 1;
+
+    int numJumps;
+
+    public float footDistance = 0;
+
     public float jumpStrength;
 
     public Camera mainCamera;
 
-    public GameObject holdingArm;
+    RaycastHit2D hit;
+    Animator animator;
+
+    public ParticleSystem smoke;
+
+    //public GameObject holdingArm;
     // Start is called before the first frame update
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
         xVel = 0;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -24,6 +37,7 @@ public class CharacterMovement : MonoBehaviour
     {
         Vector2 vel = body.velocity;
 
+        hit = Physics2D.Raycast(transform.position, new Vector2(0, -1), Mathf.Infinity, ~(1 << 10));
 
         if(Input.GetKey(KeyCode.A)){
             xVel = -speed;
@@ -35,10 +49,7 @@ public class CharacterMovement : MonoBehaviour
             xVel = 0;
         }
         
-        if(Input.GetKeyDown(KeyCode.W)){
-            vel.y = jumpStrength;
-            body.velocity = vel;
-        }
+        
 
         vel.x += (xVel - vel.x) / 10f;
 
@@ -46,19 +57,37 @@ public class CharacterMovement : MonoBehaviour
         //vel += Physics2D.gravity;
         body.velocity = vel;
         
+        if(hit.distance < footDistance){
+            animator.SetFloat("LandingTimer", animator.GetFloat("LandingTimer") + Time.deltaTime * 2f);
+            numJumps = jumps;
+        }
+        else
+            animator.SetFloat("LandingTimer", 0);
 
-        GetComponent<Animator>().SetBool("Running", Mathf.Abs(body.velocity.x) > 0.1f);
+        animator.SetBool("Ground", hit.distance < footDistance);
+        animator.SetFloat("Speed", Mathf.Abs(body.velocity.x) / speed);
+        animator.SetFloat("vSpeed", (-body.velocity.y + 1)/2f / 10f);
         GetComponent<SpriteRenderer>().flipX = body.velocity.x < 0;
 
-        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 direction = mouseWorldPosition - holdingArm.transform.position;
+        if(Input.GetKeyDown(KeyCode.W) && numJumps > 0){
+            vel.y = jumpStrength;
+            body.velocity = vel;
+            numJumps --;
+            if(hit.distance < footDistance)
+                smoke.Play();
+        }
+    }
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+    void OnDrawGizmosSelected(){
 
-        if(body.velocity.x < 0)
-                angle = 180 - angle;
+        Gizmos.color = Color.red;
+
+        hit = Physics2D.Raycast(transform.position, new Vector2(0, -1), Mathf.Infinity, ~(1 << 10));
+
+        Gizmos.DrawLine(transform.position, hit.point);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position + new Vector3(-.5f, -footDistance, 0), transform.position + new Vector3(.5f, -footDistance, 0));
         
-
-        holdingArm.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }

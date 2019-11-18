@@ -97,7 +97,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.66
+  m_Radius: 0.046
 --- !u!50 &7744161924311553162
 Rigidbody2D:
   serializedVersion: 4
@@ -131,3 +131,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a655b65e67d5840b9e31d64d0f10b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stainPrefab: {fileID: 6011174789800952967, guid: 8da1a31342327bd40aed839dce087252,
+    type: 3}
+  splash: {fileID: 0}

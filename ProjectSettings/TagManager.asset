@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Metaball
   - Walls
+  - Stain
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - ShaderPass
   - Plane
   - Character
-  - 
+  - Wall
   - 
   - 
   - 

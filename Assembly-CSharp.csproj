@@ -53,19 +53,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\GameManager.cs" />
      <Compile Include="Assets\MetaballShaderPass.cs" />
+     <Compile Include="Assets\RandomSplashPlayer.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\CharacterMovement.cs" />
      <Compile Include="Assets\Scripts\MetaballCollision.cs" />
      <Compile Include="Assets\Scripts\PaintThrower.cs" />
-     <None Include="Assets\Materials\MetaGroup.shader" />
-     <None Include="Assets\Materials\Metaballs.shader" />
-     <None Include="Assets\Materials\MetaSingle.shader" />
+     <Compile Include="Assets\StainDissipator.cs" />
+     <None Include="Assets\Materials\MetaballsMEDIUM.shader" />
+     <None Include="Assets\Materials\MetaballsHIGH.shader" />
+     <None Include="Assets\Materials\StainWall.shader" />
  <Reference Include="Unity.2D.Animation.Runtime">
  <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.2D.Animation.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.2D.IK.Editor">
+ <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.2D.IK.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.2D.IK.Runtime">
+ <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.2D.IK.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="Unity.PackageManagerUI.Editor">
  <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>

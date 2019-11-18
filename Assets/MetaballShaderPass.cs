@@ -7,6 +7,7 @@ using System.Linq;
 [ExecuteInEditMode]
 public class MetaballShaderPass : MonoBehaviour
 {
+    public string tagToRender;
     MeshRenderer meshRenderer;
     public Camera mainCamera;
     // Start is called before the first frame update
@@ -19,7 +20,12 @@ public class MetaballShaderPass : MonoBehaviour
     void Update()
     {
         
-        GameObject[] gos = GameObject.FindGameObjectsWithTag("Metaball");
+        List<GameObject> gos = GameObject.FindGameObjectsWithTag(tagToRender).ToList();
+
+        while(gos.Count >= 1024){
+            Destroy(gos[gos.Count-1]);
+            gos.RemoveAt(gos.Count-1);
+        }
 
         List<Vector4> positions = gos.Select( (go) => {
             return new Vector4(
@@ -29,7 +35,7 @@ public class MetaballShaderPass : MonoBehaviour
                 0);
         }).ToList();
 
-        while(positions.Count < 256){
+        while(positions.Count < 1024){
             positions.Add(new Vector4());
         }
 
@@ -41,7 +47,8 @@ public class MetaballShaderPass : MonoBehaviour
                 sr.color.b,
                 sr.color.a);
         }).ToList();
-        while(colors.Count < 256){
+
+        while(colors.Count < 1024){
             colors.Add(new Vector4());
         }
 
