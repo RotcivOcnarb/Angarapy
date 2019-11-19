@@ -35,6 +35,7 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         Vector2 vel = body.velocity;
 
         hit = Physics2D.Raycast(transform.position, new Vector2(0, -1), Mathf.Infinity, ~(1 << 10));
@@ -49,33 +50,34 @@ public class CharacterMovement : MonoBehaviour
             xVel = 0;
         }
         
-        
-
         vel.x += (xVel - vel.x) / 10f;
-
-        //Gravity;
-        //vel += Physics2D.gravity;
         body.velocity = vel;
         
         if(hit.distance < footDistance){
             animator.SetFloat("LandingTimer", animator.GetFloat("LandingTimer") + Time.deltaTime * 2f);
             numJumps = jumps;
         }
-        else
+        else{
             animator.SetFloat("LandingTimer", 0);
+        }
 
-        animator.SetBool("Ground", hit.distance < footDistance);
+        animator.SetBool("Ground", hit.distance <= footDistance);
         animator.SetFloat("Speed", Mathf.Abs(body.velocity.x) / speed);
         animator.SetFloat("vSpeed", (-body.velocity.y + 1)/2f / 10f);
         GetComponent<SpriteRenderer>().flipX = body.velocity.x < 0;
 
         if(Input.GetKeyDown(KeyCode.W) && numJumps > 0){
-            vel.y = jumpStrength;
-            body.velocity = vel;
-            numJumps --;
-            if(hit.distance < footDistance)
-                smoke.Play();
+            Debug.Log("Jump!");
+            if(hit.distance <= footDistance){
+                animator.SetTrigger("Jump");
+                animator.ResetTrigger("DoubleJump");
+            }
+            else{
+                animator.ResetTrigger("Jump");
+                animator.SetTrigger("DoubleJump");
+            }
         }
+        
     }
 
     void OnDrawGizmosSelected(){
@@ -89,5 +91,14 @@ public class CharacterMovement : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position + new Vector3(-.5f, -footDistance, 0), transform.position + new Vector3(.5f, -footDistance, 0));
         
+    }
+
+    public void Jump(){
+        Vector2 vel = body.velocity;
+        vel.y = jumpStrength;
+        body.velocity = vel;
+        numJumps --;
+        if(hit.distance < footDistance)
+            smoke.Play();
     }
 }
