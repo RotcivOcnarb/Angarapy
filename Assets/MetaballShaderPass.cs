@@ -22,7 +22,7 @@ public class MetaballShaderPass : MonoBehaviour
         
         List<GameObject> gos = GameObject.FindGameObjectsWithTag(tagToRender).ToList();
 
-        while(gos.Count >= 1024){
+        while(gos.Count >= 1023){
             Destroy(gos[gos.Count-1]);
             gos.RemoveAt(gos.Count-1);
         }
@@ -35,7 +35,7 @@ public class MetaballShaderPass : MonoBehaviour
                 0);
         }).ToList();
 
-        while(positions.Count < 1024){
+        while(positions.Count < 1023){
             positions.Add(new Vector4());
         }
 
@@ -48,7 +48,7 @@ public class MetaballShaderPass : MonoBehaviour
                 sr.color.a);
         }).ToList();
 
-        while(colors.Count < 1024){
+        while(colors.Count < 1023){
             colors.Add(new Vector4());
         }
 

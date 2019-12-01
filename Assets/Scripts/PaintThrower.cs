@@ -59,12 +59,13 @@ public class PaintThrower : MonoBehaviour
             for(int i = 0; i < paintQuantity; i ++){
                 //Cria o objeto tinta
                 GameObject paint = Instantiate(paintPrefab, throwPoint.transform.position, paintPrefab.transform.rotation);
+
                 Rigidbody2D paintBody = paint.GetComponent<Rigidbody2D>();
-                SpriteRenderer sr = paint.GetComponent<SpriteRenderer>();
+                //SpriteRenderer sr = paint.GetComponent<SpriteRenderer>();
 
-                paint.GetComponent<MetaballCollision>().splash = splash;
+                paint.GetComponent<NewMetaballSingle>().splash = splash;
 
-                Vector3 position = new Vector3(throwPoint.transform.position.x, throwPoint.transform.position.y, Random.Range(0.02f, 0.05f));
+                Vector3 position = throwPoint.transform.position;
                 
                 //Define propriedades
                 paintBody.velocity = direction * throwForce; // Velocidade
@@ -78,7 +79,7 @@ public class PaintThrower : MonoBehaviour
                 paint.transform.position = position;
                 
                 //sr.color = addColor(new Color(100/255f, 160/255f, 255/255f, 0.5f), Random.onUnitSphere*0.3f);
-                sr.color = Color.HSVToRGB((Time.fixedTime*360 % 360) / 360f, 1f, 1f);//Cor
+                //sr.color = Color.HSVToRGB((Time.fixedTime*360 % 360) / 360f, 1f, 1f);//Cor
             }
 
             targetVolume = 1;

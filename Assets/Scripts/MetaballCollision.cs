@@ -11,6 +11,7 @@ public class MetaballCollision : MonoBehaviour
     public RandomSplashPlayer splash;
 
     int resilience = 0;
+    float timer = -10000;
     void Start()
     {
         
@@ -21,6 +22,11 @@ public class MetaballCollision : MonoBehaviour
     {
         CircleCollider2D coll = GetComponent<CircleCollider2D>();
         coll.radius = Mathf.Sqrt(transform.position.z) * 0.046f;
+
+        timer += Time.deltaTime;
+        if(timer > 0){
+            Destroy(gameObject);
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision){
@@ -57,7 +63,9 @@ public class MetaballCollision : MonoBehaviour
                 newMeta.transform.position.z / 4f
             );
 
+
             newMeta.GetComponent<MetaballCollision>().resilience = 1;
+            newMeta.GetComponent<MetaballCollision>().timer = -3;
             Vector2 reflection = direction - 2 * Vector2.Dot(direction, normal) * normal;
 
             newMeta.GetComponent<Rigidbody2D>().velocity = reflection * 0.1f;

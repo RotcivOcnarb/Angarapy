@@ -53,17 +53,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AdaptBGToCamera.cs" />
      <Compile Include="Assets\FollowPlayer.cs" />
      <Compile Include="Assets\GameManager.cs" />
+     <Compile Include="Assets\KaduTrail.cs" />
      <Compile Include="Assets\MetaballShaderPass.cs" />
+     <Compile Include="Assets\NewMetaballSingle.cs" />
      <Compile Include="Assets\RandomSplashPlayer.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\CharacterMovement.cs" />
      <Compile Include="Assets\Scripts\MetaballCollision.cs" />
      <Compile Include="Assets\Scripts\PaintThrower.cs" />
      <Compile Include="Assets\StainDissipator.cs" />
+     <Compile Include="Assets\TrailDissipator.cs" />
+     <Compile Include="Assets\WallCameraInitializer.cs" />
+     <None Include="Assets\Materials\Novo Teste\StainShader2.shader" />
      <None Include="Assets\Materials\MetaballsMEDIUM.shader" />
      <None Include="Assets\Materials\MetaballsHIGH.shader" />
+     <None Include="Assets\Materials\Novo Teste\MetaballSingle.shader" />
+     <None Include="Assets\Materials\Novo Teste\MetaballGroup.shader" />
      <None Include="Assets\Materials\StainWall.shader" />
  <Reference Include="Unity.2D.Animation.Runtime">
  <HintPath>E:/unity/Unity 2D Shaders/Library/ScriptAssemblies/Unity.2D.Animation.Runtime.dll</HintPath>

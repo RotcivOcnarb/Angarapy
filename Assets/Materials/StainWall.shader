@@ -101,12 +101,16 @@
                 else
                     color.a = 0.0;
 
-                color.a *= mask.a;
+                //color.a *= mask.a;
 
                 color.a *= paintAlpha; //transparencia
 
                 float4 fn = float4(0, 0, 0, 0);
-                fn.rgb = color.rgb * color.a + mask.rgb * (1 - color.a); //ALPHA BLENDING
+                //fn.rgb = color.rgb * color.a + mask.rgb * (1 - color.a); //ALPHA BLENDING
+                fn.rgb = lerp(
+                    mask.rgb + (color.rgb * color.a * mask.rgb),
+                    color.rgb * color.a + mask.rgb * (1 - color.a),
+                    0.7);
                 fn.a = mask.a;
 
                 return fn;

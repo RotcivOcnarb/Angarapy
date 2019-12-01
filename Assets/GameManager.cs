@@ -27,7 +27,6 @@ public class GameManager : MonoBehaviour
             fpsText.text = (int)(1 / Time.unscaledDeltaTime) + "";
         }
 
-        velocityText.text = player.GetComponent<Rigidbody2D>().velocity + "";
-        
+        velocityText.text = player.transform.localScale + "";
     }
 }

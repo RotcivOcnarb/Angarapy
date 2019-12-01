@@ -14,15 +14,13 @@ public class StainDissipator : MonoBehaviour
     void Update()
     {
 
-        transform.position = new Vector3(
-            transform.position.x,
-            transform.position.y,
-            transform.position.z - Time.deltaTime * 0.03f
+        transform.localScale = new Vector3(
+            transform.localScale.x - Time.deltaTime,
+            transform.localScale.y - Time.deltaTime,
+            transform.localScale.z - Time.deltaTime
         );
 
-        if(transform.position.z <= 0)
+        if(transform.localScale.x <= 0)
             Destroy(gameObject);
-        
-
     }
 }

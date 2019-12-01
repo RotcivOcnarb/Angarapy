@@ -1,6 +1,6 @@
 Win64
 PlayerPath?
-C:/Users/Rotciv/Documents/Painter with Character Controller/Unity 2D Shaders.exe
+C:/Users/Rotciv/Documents/Angarapy Build/Unity 2D Shaders.exe
 SceneListBegin?
 Assets/Scenes/SampleScene.unity
 SceneListEnd?
@@ -18,8 +18,9 @@ e1bbf0ab858085e38fae6b12ebbdcd35 UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 e1bbf0ab858085e38fae6b12ebbdcd35 UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 e1bbf0ab858085e38fae6b12ebbdcd35 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 201e3fde670b00545944bb3db215c80a UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
+71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.StainDissipator
 e7a73f5f78ba6445195ec23b74a1ce2d Unity.TextMeshPro.dll:TMPro.TMP_ScrollbarEventHandler
-b4f49b648077ccb2465de990f0cc5bf2 Assembly-CSharp.dll:.CharacterMovement
+1f578b97da991a544104bf781d5de6a8 Assembly-CSharp.dll:.CharacterMovement
 cf9f5cf2c3145a37ac07f00e50e460f9 UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
 5fc094978ce3e3591a7500ed380d854a UnityEngine.UI.dll:UnityEngine.UI.Button
@@ -118,7 +119,7 @@ d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.Spa
 7fb9de8dcf73854b6b328eca1f7a6e6d Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsTracker
 94017dcc9f00fe671ea7dc427b4da011 Unity.TextMeshPro.dll:TMPro.TMP_SpriteAsset
 b3ab2106268377ffe25dd18ac23dca28 Unity.TextMeshPro.dll:TMPro.TMP_Asset
-5ad424ba04bf6472ac20534c7efff346 Assembly-CSharp.dll:.MetaballCollision
+bcdb73c9ca91163174b1ffcf5b4095be Assembly-CSharp.dll:.MetaballCollision
 71bb6a6b6c8f052f948db64c7dd3ca4f Unity.Analytics.Editor.dll:UnityEditor.Analytics.AnalyticsEventTrackerEditor
 71bb6a6b6c8f052f948db64c7dd3ca4f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
 4fd8bf02e3089425d3502e26c44ba31a Unity.TextMeshPro.dll:TMPro.TextContainer
@@ -136,7 +137,7 @@ e0ee4b3d4e27318934cc940a969d3d96 UnityEngine.Networking.dll:UnityEngine.Networki
 ad9173d3a69d99153f38ed4b62226129 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransform
 9b895dcabbc1faf095c000c32d471fd0 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 5887ef1bc706b22b773d253fd443ceef UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
-538b07a3fb28dcfd9f72dd3787624f22 Assembly-CSharp.dll:.PaintThrower
+00989e8f893823c8cbaf0f94ae8be9e7 Assembly-CSharp.dll:.PaintThrower
 866c1ddfe35faad384fce006d7c156d3 Unity.2D.Animation.Runtime.dll:UnityEngine.Experimental.U2D.Animation.SpriteSkin
 510fefd6a544e16a3ffefa557ddcba39 Unity.TextMeshPro.dll:TMPro.PackageResourceImporterWindow
 aa82b3ce4c0c9b227036c0337315c5d3 Unity.TextMeshPro.dll:TMPro.TMP_FontAsset
@@ -151,16 +152,25 @@ e51c09a4cc447f11db225afcd8e3e490 Unity.TextMeshPro.dll:TMPro.TMP_Settings
 fb6a1ea36b4f6ef5948d283d93760765 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 5b0391b7e3d9ea9db6c0a8fbd0ca23f6 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSoundfieldExtension
 5b0391b7e3d9ea9db6c0a8fbd0ca23f6 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSourceExtension
+762a30c8d779b11af16ed9ce1f2d32fa Unity.2D.IK.Runtime.dll:UnityEngine.Experimental.U2D.IK.FabrikSolver2D
 931f489e44eadf809e9310429c99dde5 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioListenerExtension
 fb6a1ea36b4f6ef5948d283d93760765 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 5b0391b7e3d9ea9db6c0a8fbd0ca23f6 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSoundfieldExtension
 5b0391b7e3d9ea9db6c0a8fbd0ca23f6 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSourceExtension
 a4f0a4f62100f1a4fb5cbe0e00dde83f Unity.TextMeshPro.dll:TMPro.TextMeshProUGUI
+9b2d72155209a515197b0788f9f11a91 Unity.2D.IK.Runtime.dll:UnityEngine.Experimental.U2D.IK.LimbSolver2D
+71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.FollowPlayer
 5fc094978ce3e3591a7500ed380d854a Unity.Analytics.DataPrivacy.dll:UnityEngine.Analytics.DataPrivacyButton
 d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
+475207dabbac1fafe8b2d868d5530698 Assembly-CSharp.dll:.WallCameraInitializer
 d791aa6007fa3640be1164ea75bb087d Unity.TextMeshPro.dll:TMPro.TMP_StyleSheet
 40a9d99a4ff067b898bcdb92f180fa0b Assembly-CSharp.dll:.CameraMovement
+edec4c602b0001fe25485c47ebf3be6c Unity.2D.IK.Runtime.dll:UnityEditor.Experimental.U2D.IK.IKEditorManagerHelper
 c6666661329916e218bee7f5e79e60f5 Unity.TextMeshPro.dll:TMPro.TextMeshPro
 3165968ba45c74472d279ba04455fccb Unity.TextMeshPro.dll:TMPro.TMP_ColorGradient
 8649814970b42d345b89944b862453cc Unity.TextMeshPro.dll:TMPro.TMP_SubMesh
-71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.StainDissipator
+0e1d02c74d354ffc8b804011a794739b Unity.2D.IK.Runtime.dll:UnityEngine.Experimental.U2D.IK.IKManager2D
+05d016239743fffda89412ccab7400ac Assembly-CSharp.dll:.GameManager
+59ce5902048c1041729c804e2772b2ce Unity.2D.IK.Runtime.dll:UnityEngine.Experimental.U2D.IK.CCDSolver2D
+efdb2ed81c52419941c65f2ff03b7294 Assembly-CSharp.dll:.RandomSplashPlayer
+bcdb73c9ca91163174b1ffcf5b4095be Assembly-CSharp.dll:.NewMetaballSingle
