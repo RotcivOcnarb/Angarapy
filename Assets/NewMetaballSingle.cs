@@ -15,7 +15,7 @@ public class NewMetaballSingle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        splash = GameObject.Find("SplashAudio").GetComponent<RandomSplashPlayer>();
     }
 
     // Update is called once per frame
@@ -45,11 +45,11 @@ public class NewMetaballSingle : MonoBehaviour
 
     void DestroyAndStain(Vector2 direction, Vector2 normal){
         GameObject stain = Instantiate(stainPrefab, gameObject.transform.position, stainPrefab.transform.rotation);
-        splash.PlayRandomSplash(transform.position.z * 20);
+        splash.PlayRandomSplash(transform.localScale.x / 5f);
 
-        if(transform.position.z > 0.02f){
+        if(transform.localScale.x > 1f){
             GameObject newMeta = Instantiate(gameObject);
-            newMeta.transform.localScale = new Vector3(newMeta.transform.localScale.x * 0.25f, newMeta.transform.localScale.y * 0.25f, newMeta.transform.localScale.z * 0.25f);
+            newMeta.transform.localScale = new Vector3(newMeta.transform.localScale.x * 0.25f, newMeta.transform.localScale.y * 0.25f, newMeta.transform.localScale.z);
 
             newMeta.GetComponent<NewMetaballSingle>().resilience = 1;
             Vector2 reflection = direction - 2 * Vector2.Dot(direction, normal) * normal;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.U2D.IK;
 
 public class PaintThrower : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class PaintThrower : MonoBehaviour
     public float shootOpening = 10;
     public GameObject paintPrefab;
     public Camera mainCamera;
+    public CCDSolver2D solver;
+    public IKManager2D ikManager;
 
     public GameObject throwPoint;
     public GameObject elbow;
@@ -19,8 +22,6 @@ public class PaintThrower : MonoBehaviour
     AudioSource audioSource;
 
     public RandomSplashPlayer splash;
-
-    float delay = 0;
 
     float audioVolume = 0;
     float targetVolume = 0;
@@ -32,8 +33,6 @@ public class PaintThrower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        delay += Time.deltaTime;
-
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         ikTarget.transform.position = mouseWorldPos;
 
@@ -46,15 +45,21 @@ public class PaintThrower : MonoBehaviour
         Vector2 diff = ikTarget.transform.position - elbow.transform.position;
         ikTarget.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
 
-        if(Input.GetMouseButton(0)){
+        ikManager.enabled = Input.GetMouseButton(0);
+
+        solver.weight += ((Input.GetMouseButton(0) ? 1 : 0) - solver.weight) / 5f;
+
+        if (Input.GetMouseButton(0)){
             //Calcula a direção do tiro
-            
-            Vector2 direction = new Vector2(Mathf.Cos(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad), Mathf.Sin(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+
+            Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+
+            Vector2 direction = mousePos - (Vector2)throwPoint.transform.position;//new Vector2(Mathf.Cos(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad), Mathf.Sin(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
             direction.Normalize();
             direction = Rotate(direction, Random.Range(-shootOpening, shootOpening));
 
-            if(GetComponent<SpriteRenderer>().flipX)
-                direction.x *= -1;
+            //if(GetComponent<SpriteRenderer>().flipX)
+               // direction.x *= -1;
 
             for(int i = 0; i < paintQuantity; i ++){
                 //Cria o objeto tinta

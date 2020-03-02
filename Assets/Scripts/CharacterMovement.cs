@@ -4,58 +4,82 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+
+    /* Components */
     Rigidbody2D body;
-    float xVel;
-    public float speed;
-
-    public int jumps = 1;
-
-    public float dashForce = 5;
-
-    int numJumps;
-
-    public float footDistance = 0;
-    public float footStart = 0;
-
-    float fallingTime = 0;
-    public float jumpStrength;
-
-    public Camera mainCamera;
-
-    RaycastHit2D hit;
     Animator animator;
 
+    /* External Objects */
+    public Camera mainCamera;
     public ParticleSystem smoke;
+    public ParticleSystem walkSmoke;
+    public RandomSplashPlayer walkSfx;
 
-    bool dashed;
+    /* Movement */
+        /* Properties */
+        public float speed;
+        public int jumps = 1;
+        public float dashForce = 5;
+        public float footDistance = 0;
+        public float jumpStrength;
+        /* Locals */
+        public float lastWPress = 1000;
+        float xVel;
+        public int numJumps;
+        float fallingTime = 0;
+        bool dashed;
+        bool inDash = false;
+        float dashTimer = 0;
+        bool flipX = false;
+        float slidingTimer = 0;
+        bool sliding;
+        float slidingCooldown = 0;
+        [HideInInspector]
+        public bool grabbing = false;
 
-    bool inDash = false;
-    float dashTimer = 0;
-    bool flipX = false;
-
-    Vector3 initialScale;
-
-    public bool grabbing = false;
-
+    RaycastHit2D hit;
     float smallerXDistanceMetaball;
     GameObject smallerXDistanceObj;
-
     GameObject[] metaballs;
+    float walkSfxTimer = 0;
 
-    //public GameObject holdingArm;
     // Start is called before the first frame update
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
         xVel = 0;
         animator = GetComponent<Animator>();
-        initialScale = transform.localScale;
     }
 
     // Update is called once per frame
-    void Update()
-    {
 
+    private void Update()
+    {
+        walkSfxTimer += Time.deltaTime;
+        lastWPress += Time.deltaTime;
+
+        if (!OnGround() && body.velocity.y < 0) {
+            fallingTime += Time.deltaTime;
+        }
+        else {
+            fallingTime = 0;
+        }
+
+        slidingTimer -= Time.deltaTime;
+        slidingCooldown -= Time.deltaTime;
+
+        dashTimer -= Time.deltaTime;
+        if (dashTimer < 0 && inDash) {
+            EndDash();
+        }
+
+        if (Input.GetKeyDown(KeyCode.W)) {
+            lastWPress = 0;
+        }
+    }
+
+    void FixedUpdate()
+    {
         metaballs = GameObject.FindGameObjectsWithTag("Stain");
         smallerXDistanceObj = null;
         smallerXDistanceMetaball = 100000;
@@ -68,44 +92,45 @@ public class CharacterMovement : MonoBehaviour
                 smallerXDistanceObj = mb;
             }
         }
-        
-        if(!grabbing){
-            Vector3 scl = transform.localScale;
-            scl += (initialScale - scl) / 5f;
-            transform.localScale = scl;
-
+        if (!grabbing){
             Vector2 vel = body.velocity;
             bool wasInGround = OnGround();
-            hit = Physics2D.Raycast(transform.position - new Vector3(0, footStart), new Vector2(0, -1), Mathf.Infinity, ~(1 << 10));
+            hit = Physics2D.Raycast(transform.position, new Vector2(0, -1), Mathf.Infinity, groundLayerMask);
 
             if(!wasInGround && OnGround()){
-                StartCoroutine(TouchGround(fallingTime));
                 flipX = body.velocity.x < 0;
             }
 
-            if(Input.GetKey(KeyCode.A) && !flipX && !inDash){
+            if(Input.GetKey(KeyCode.A) && !flipX && !inDash && !sliding) {
                 flipX = true;
             }
-            if(Input.GetKey(KeyCode.D) && flipX && !inDash){
+            if(Input.GetKey(KeyCode.D) && flipX && !inDash && !sliding) {
                 flipX = false;
             }
 
-            if(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D) && !inDash){
+            if(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D) && !inDash && !sliding){
                 flipX = body.velocity.x < 0;
             }
 
             if(Input.GetKey(KeyCode.A)){
                 xVel = -speed;
+                if (!walkSmoke.isPlaying && OnGround())
+                    walkSmoke.Play();
             }
             if(Input.GetKey(KeyCode.D)){
                 xVel = speed;
+                if (!walkSmoke.isPlaying && OnGround())
+                    walkSmoke.Play();
             }
             if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)){
                 xVel = 0;
             }
 
+            if(xVel == 0 || !OnGround())
+                walkSmoke.Stop();
+
             vel.x += (xVel - vel.x) / 4f;
-            if(!inDash)
+            if(!inDash && !sliding)
                 body.velocity = vel;
             
             if(OnGround()){
@@ -129,15 +154,24 @@ public class CharacterMovement : MonoBehaviour
                 body.constraints = RigidbodyConstraints2D.FreezeRotation;
             }
 
+            if(OnGround() && !sliding && !inDash && xVel != 0) {
+                if(walkSfxTimer < 0) {
+                    walkSfxTimer = 0.5f;
+                    walkSfx.PlayRandomSplash(1f);
+                }
+            }
+
         }
         else{
 
-            if(!Input.GetKey(KeyCode.Space) || smallerXDistanceObj == null || smallerXDistanceMetaball > 0.5f){
+            transform.rotation = Quaternion.identity;
+
+            if(!Input.GetMouseButton(1) || smallerXDistanceObj == null || smallerXDistanceMetaball > 0.5f){
                 grabbing = false;
                 body.constraints = RigidbodyConstraints2D.FreezeRotation;
                 body.gravityScale = 1;
                 dashed = false;
-                numJumps = jumps+1;
+                numJumps = jumps;
                 Jump();
             }
             else{
@@ -157,31 +191,37 @@ public class CharacterMovement : MonoBehaviour
             }
         }
 
-        Debug.Log("Obj: " + smallerXDistanceObj);
-        Debug.Log("Distance: " + smallerXDistanceMetaball);
-
         animator.SetBool("Ground", OnGround());
         animator.SetFloat("SpeedX", Mathf.Abs(body.velocity.x) / speed);
         animator.SetFloat("vSpeed", (-body.velocity.y + 1)/2f / 10f);
         GetComponent<SpriteRenderer>().flipX = flipX;
-
-        if(!OnGround() && body.velocity.y < 0){
-            fallingTime += Time.deltaTime;
-        }
-        else{
-            fallingTime = 0;
-        }
 
         if(!OnGround() && Input.GetMouseButtonDown(1) && !dashed){
             animator.SetTrigger("Dash");
             dashed = true;
         }
 
-        if(!grabbing){
-            if(Input.GetKeyDown(KeyCode.W) && numJumps > 0){
-                
+        //if (OnGround() && !grabbing && Input.GetMouseButtonDown(1) && !sliding && slidingCooldown < 0) {
+        //    slidingTimer = .7f;
+        //    Vector2 dash = new Vector2(dashForce * (flipX ? -1 : 1), 0);
+        //    sliding = true;
+        //    body.velocity = dash;
+        //    //body.gravityScale = 0f;
+        //}
 
+        if(slidingTimer <= 0 && sliding) {
+            body.velocity = new Vector2(0, body.velocity.y);
+            sliding = false;
+            body.gravityScale = 1f;
+            slidingCooldown = 0.5f;
+        }
+
+        animator.SetBool("Sliding", sliding);
+
+        if(!grabbing){
+            if(lastWPress < 0.1f && numJumps > 0){ //PULO
                 if(OnGround()){
+                    dashed = false;
                     animator.SetTrigger("Jump");
                     animator.ResetTrigger("DoubleJump");
                 }
@@ -189,17 +229,13 @@ public class CharacterMovement : MonoBehaviour
                     animator.ResetTrigger("Jump");
                     animator.SetTrigger("DoubleJump");
                 }
+                Jump();
+                lastWPress = 10000;
             }
         }
-
         animator.SetBool("Grabbing", grabbing);
-
-        dashTimer -= Time.deltaTime;
-        if(dashTimer < 0 && inDash){
-            EndDash();
-        }
-        
     }
+    
 
     public Vector2 Rotate(Vector2 v, float degrees) {
          float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
@@ -220,9 +256,10 @@ public class CharacterMovement : MonoBehaviour
         float deg = Mathf.Atan2(mouseDir.y, mouseDir.x) * Mathf.Rad2Deg;
         dash = Rotate(dash, deg);
         body.velocity = dash;
-        Vector3 scl = transform.localScale;
-        scl.y *= 0.7f;
-        transform.localScale = scl;
+        body.drag = 5f;
+        //Vector3 scl = initialScale;
+        //scl.y *= 0.7f;
+        //transform.localScale = scl;
         flipX = body.velocity.x < 0;
 
         if(!flipX){
@@ -234,37 +271,33 @@ public class CharacterMovement : MonoBehaviour
 
         inDash = true;
         body.gravityScale = 0f;
-        GetComponent<KaduTrail>().speed = 1;
-        GetComponent<KaduTrail>().timer = 1f;
+        GetComponent<TrailRenderer>().emitting = true;
     }
 
     public void EndDash(){
-        body.velocity = new Vector2(0, 0);
-        inDash = false;
-        body.gravityScale = 1f;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
-        GetComponent<KaduTrail>().speed = 0;
-        GetComponent<KaduTrail>().timer = 1f;
+        if (inDash) {
+            body.velocity = new Vector2(0, 0);
+            inDash = false;
+            body.drag = 0f;
+            body.gravityScale = 1f;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            GetComponent<TrailRenderer>().emitting = false;
+        }
     }
 
-    IEnumerator TouchGround(float fallingTime){
-        yield return new WaitForSeconds(0.1f);
-        Vector3 scl = transform.localScale;
-        scl.x *= 1.3f;
-        transform.localScale = scl;
-    }
-
-    bool OnGround(){
+    public bool OnGround(){
         return hit.distance < footDistance;
     }
+
+    public LayerMask groundLayerMask;
 
     void OnDrawGizmosSelected(){
 
         Gizmos.color = Color.red;
 
-        hit = Physics2D.Raycast(transform.position - new Vector3(0, footStart), new Vector2(0, -1), Mathf.Infinity, ~(1 << 10));
+        hit = Physics2D.Raycast(transform.position, new Vector2(0, -1), Mathf.Infinity, groundLayerMask);
 
-        Gizmos.DrawLine(transform.position - new Vector3(0, footStart), hit.point);
+        Gizmos.DrawLine(transform.position, hit.point);
 
         Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position + new Vector3(-.5f, -footDistance, 0), transform.position + new Vector3(.5f, -footDistance, 0));
@@ -276,17 +309,18 @@ public class CharacterMovement : MonoBehaviour
         vel.y = jumpStrength;
         body.velocity = vel;
         numJumps --;
-        if(OnGround()){
-            smoke.Play();
-            Vector3 scl = transform.localScale;
-            scl.y *= 1.3f;
-            transform.localScale = scl;
-        }
+        smoke.Play();
+        slidingTimer = 0;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        
     }
     void OnCollisionStay2D(Collision2D collision){
         if(collision.collider.tag == "Walls" && !grabbing){ //Agarra numa parede
             if(Mathf.Abs(collision.contacts[0].normal.x) > 0.9f && Mathf.Abs(collision.contacts[0].normal.y) < 0.1f
-                && Input.GetKey(KeyCode.Space)){
+                && Input.GetMouseButton(1)){
                 if(smallerXDistanceObj != null && smallerXDistanceMetaball < 0.5f){
                     grabbing = true;
                     body.gravityScale = 0;
@@ -295,6 +329,10 @@ public class CharacterMovement : MonoBehaviour
                     body.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
                 }
             }
+            if (inDash && !grabbing) {
+                animator.SetTrigger("DashInterruption");
+            }
+            EndDash();
         }
     }
 }

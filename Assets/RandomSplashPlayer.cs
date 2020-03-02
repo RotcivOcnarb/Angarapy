@@ -25,6 +25,7 @@ public class RandomSplashPlayer : MonoBehaviour
     }
 
     public void PlayRandomSplash(float volume){
+        Debug.Log("Playing audio in volume " + volume);
         source.PlayOneShot(audios[Rnd(audios.Length)], volume);
     }
 }

@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
             updateTimer = 0;
             fpsText.text = (int)(1 / Time.unscaledDeltaTime) + "";
         }
-
-        velocityText.text = player.transform.localScale + "";
+        CharacterMovement cm = player.GetComponent<CharacterMovement>();
+        velocityText.text = cm.OnGround() + " - " + cm.numJumps;
     }
 }
