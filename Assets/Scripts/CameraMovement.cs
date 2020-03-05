@@ -35,7 +35,7 @@ public class CameraMovement : MonoBehaviour
     {
         float targetSize = 7;
 
-        if (Input.GetKey(KeyCode.LeftShift)) {
+        if (Input.GetButton("ZoomOut")) {
             targetSize = 13;
         }
 

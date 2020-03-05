@@ -42,6 +42,8 @@ public class CharacterMovement : MonoBehaviour
     GameObject smallerXDistanceObj;
     GameObject[] metaballs;
     float walkSfxTimer = 0;
+    bool rtDown = false;
+    bool dashJoystick;
 
     // Start is called before the first frame update
     void Start()
@@ -72,8 +74,7 @@ public class CharacterMovement : MonoBehaviour
         if (dashTimer < 0 && inDash) {
             EndDash();
         }
-
-        if (Input.GetKeyDown(KeyCode.W)) {
+        if (Input.GetButtonDown("Jump")) {
             lastWPress = 0;
         }
     }
@@ -92,6 +93,9 @@ public class CharacterMovement : MonoBehaviour
                 smallerXDistanceObj = mb;
             }
         }
+
+        float triggerRT = Input.GetAxisRaw("DashJoy");
+
         if (!grabbing){
             Vector2 vel = body.velocity;
             bool wasInGround = OnGround();
@@ -101,30 +105,25 @@ public class CharacterMovement : MonoBehaviour
                 flipX = body.velocity.x < 0;
             }
 
-            if(Input.GetKey(KeyCode.A) && !flipX && !inDash && !sliding) {
+            float rawX = Input.GetAxisRaw("Horizontal");
+
+            //Direção e Flip de Sprite
+            if (rawX < -.12 && !flipX && !inDash && !sliding) {
                 flipX = true;
             }
-            if(Input.GetKey(KeyCode.D) && flipX && !inDash && !sliding) {
+            if(rawX > .12 && flipX && !inDash && !sliding) {
                 flipX = false;
             }
 
-            if(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D) && !inDash && !sliding){
-                flipX = body.velocity.x < 0;
+            //Movimentação Física
+            if (Mathf.Abs(rawX) > .1) {
+                xVel = speed * rawX;
+                if (!walkSmoke.isPlaying && OnGround())
+                    walkSmoke.Play();
             }
 
-            if(Input.GetKey(KeyCode.A)){
-                xVel = -speed;
-                if (!walkSmoke.isPlaying && OnGround())
-                    walkSmoke.Play();
-            }
-            if(Input.GetKey(KeyCode.D)){
-                xVel = speed;
-                if (!walkSmoke.isPlaying && OnGround())
-                    walkSmoke.Play();
-            }
-            if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)){
+            if (Mathf.Abs(rawX) < .1) 
                 xVel = 0;
-            }
 
             if(xVel == 0 || !OnGround())
                 walkSmoke.Stop();
@@ -142,7 +141,10 @@ public class CharacterMovement : MonoBehaviour
                     body.velocity = new Vector2(body.velocity.x - (hit.normal.x * .5f), body.velocity.y);
                 }
 
-                if ( xVel == 0) {
+                if ( xVel == 0) {// Paradinha q evita o player de "deslizar" pelas plataformas com angulo não reto
+                    // Porém dá um problema na animação q o player fica flicando
+                    //ainda não descobri um jeito de arrumar isso
+
                     //body.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
                 }
                 else{
@@ -166,7 +168,7 @@ public class CharacterMovement : MonoBehaviour
 
             transform.rotation = Quaternion.identity;
 
-            if(!Input.GetMouseButton(1) || smallerXDistanceObj == null || smallerXDistanceMetaball > 0.5f){
+            if(triggerRT < 0.1f || smallerXDistanceObj == null || smallerXDistanceMetaball > 0.5f){
                 grabbing = false;
                 body.constraints = RigidbodyConstraints2D.FreezeRotation;
                 body.gravityScale = 1;
@@ -176,10 +178,10 @@ public class CharacterMovement : MonoBehaviour
             }
             else{
                 Vector2 newVel = new Vector2(0, 0);
-                if(Input.GetKey(KeyCode.W)){
+                if(Input.GetAxisRaw("Vertical") > 0.1) {
                     newVel.y = speed;
                 }
-                else if(Input.GetKey(KeyCode.S)){
+                else if(Input.GetAxisRaw("Vertical") < -0.1) {
                     newVel.y = -speed;
                 }
                 else{
@@ -196,9 +198,27 @@ public class CharacterMovement : MonoBehaviour
         animator.SetFloat("vSpeed", (-body.velocity.y + 1)/2f / 10f);
         GetComponent<SpriteRenderer>().flipX = flipX;
 
-        if(!OnGround() && Input.GetMouseButtonDown(1) && !dashed){
+        
+
+        if(triggerRT > 0.5f) {
+            if (!rtDown) {
+                rtDown = true;
+                //aqui evento de Down
+                if (!OnGround() && !dashed) {
+                    animator.SetTrigger("Dash");
+                    dashed = true;
+                    dashJoystick = true;
+                }
+            }
+        }
+        else {
+            rtDown = false;
+        }
+
+        if (!OnGround() && Input.GetButtonDown("DashKey") && !dashed) {
             animator.SetTrigger("Dash");
             dashed = true;
+            dashJoystick = false;
         }
 
         //if (OnGround() && !grabbing && Input.GetMouseButtonDown(1) && !sliding && slidingCooldown < 0) {
@@ -209,7 +229,7 @@ public class CharacterMovement : MonoBehaviour
         //    //body.gravityScale = 0f;
         //}
 
-        if(slidingTimer <= 0 && sliding) {
+        if (slidingTimer <= 0 && sliding) {
             body.velocity = new Vector2(0, body.velocity.y);
             sliding = false;
             body.gravityScale = 1f;
@@ -252,7 +272,13 @@ public class CharacterMovement : MonoBehaviour
         dashTimer = 0.5f;
         Vector2 dash = new Vector2(dashForce, 0);
         Vector2 mouseDir = mainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        Debug.Log("Dashed with joystick? " + dashJoystick);
+        if (dashJoystick) {
+            mouseDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        }
+
         mouseDir.Normalize();
+
         float deg = Mathf.Atan2(mouseDir.y, mouseDir.x) * Mathf.Rad2Deg;
         dash = Rotate(dash, deg);
         body.velocity = dash;
@@ -318,9 +344,10 @@ public class CharacterMovement : MonoBehaviour
         
     }
     void OnCollisionStay2D(Collision2D collision){
-        if(collision.collider.tag == "Walls" && !grabbing){ //Agarra numa parede
+        float triggerRT = Input.GetAxisRaw("DashJoy");
+        if (collision.collider.tag == "Walls" && !grabbing){ //Agarra numa parede
             if(Mathf.Abs(collision.contacts[0].normal.x) > 0.9f && Mathf.Abs(collision.contacts[0].normal.y) < 0.1f
-                && Input.GetMouseButton(1)){
+                && (Input.GetMouseButton(1) || triggerRT > 0.5f)){
                 if(smallerXDistanceObj != null && smallerXDistanceMetaball < 0.5f){
                     grabbing = true;
                     body.gravityScale = 0;

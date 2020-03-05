@@ -18,6 +18,7 @@ public class PaintThrower : MonoBehaviour
     public GameObject elbow;
 
     public GameObject ikTarget;
+    public GameObject shoulder;
 
     AudioSource audioSource;
 
@@ -25,6 +26,8 @@ public class PaintThrower : MonoBehaviour
 
     float audioVolume = 0;
     float targetVolume = 0;
+
+    bool joyMode = false;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -33,10 +36,27 @@ public class PaintThrower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        ikTarget.transform.position = mouseWorldPos;
+        Vector2 paintAxis = new Vector2(Input.GetAxis("PaintX"), Input.GetAxis("PaintY"));
+        Debug.Log(paintAxis);
+        float paintMag = paintAxis.magnitude;
+        if (paintMag > 0.1f)
+            joyMode = true;
+        if (Input.GetMouseButton(0))
+            joyMode = false;
 
-        if(GetComponent<SpriteRenderer>().flipX)
+       
+        if (!joyMode) {
+            /* Mouse Specific */
+            Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            ikTarget.transform.position = mouseWorldPos;
+            /* End Mouse Specific */
+        }
+        else {
+            Vector3 finalTarget = shoulder.transform.position + (Vector3)paintAxis * 10;
+            ikTarget.transform.position = finalTarget;
+        }
+
+        if (GetComponent<SpriteRenderer>().flipX)
                 ikTarget.transform.localPosition = new Vector3(
                     -ikTarget.transform.localPosition.x,
                     ikTarget.transform.localPosition.y,
@@ -45,16 +65,23 @@ public class PaintThrower : MonoBehaviour
         Vector2 diff = ikTarget.transform.position - elbow.transform.position;
         ikTarget.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
 
-        ikManager.enabled = Input.GetMouseButton(0);
+        ikManager.enabled = Input.GetMouseButton(0) || paintMag > 0.1f;
 
-        solver.weight += ((Input.GetMouseButton(0) ? 1 : 0) - solver.weight) / 5f;
+        solver.weight += ((ikManager.enabled ? 1 : 0) - solver.weight) / 5f;
 
-        if (Input.GetMouseButton(0)){
-            //Calcula a direção do tiro
+        if (Input.GetMouseButton(0) || paintMag > 0.1f) {
+            //Calcula a dirVector2 directioneção do tiro
 
-            Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 direction = new Vector2();
 
-            Vector2 direction = mousePos - (Vector2)throwPoint.transform.position;//new Vector2(Mathf.Cos(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad), Mathf.Sin(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+            if (!joyMode) {
+                Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+                direction = mousePos - (Vector2)throwPoint.transform.position;//new Vector2(Mathf.Cos(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad), Mathf.Sin(throwPoint.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+            }
+            else {
+                direction = paintAxis;
+            }
+            
             direction.Normalize();
             direction = Rotate(direction, Random.Range(-shootOpening, shootOpening));
 
